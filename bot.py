@@ -1,5 +1,14 @@
+import os
+
 import discord
 import responses
+from os.path import join, dirname
+from dotenv import load_dotenv
+
+
+dotenv_path = join(dirname(__file__), 'secret.env')
+load_dotenv(dotenv_path)
+TOKEN = os.environ.get("TOKEN")
 
 
 async def send_message(message, user_message, is_private):
@@ -12,7 +21,6 @@ async def send_message(message, user_message, is_private):
 
 
 def run_discord_bot():
-    TOKEN = 'ODE4ODg0ODIxMzQ1NTAxMjM1.GXDb-s.tX9Qfa3QQ6q3N2Db4KWQZ9MuQyJJw_REeQ9qyw'
     intents = discord.Intents.default()
     intents.message_content = True
     intents.members = True
@@ -35,8 +43,13 @@ def run_discord_bot():
         if message_id == payload.message_id:
             if payload.channel_id == channel_id:
                 # Doing it this way because emoji from payload has a weird whitespace character
-                if '\u2639'.encode('UTF-8') in emoji.encode('UTF-8'):
+                # if '\u2639'.encode('UTF-8') in emoji.encode('UTF-8'):
+                if emoji == '👍':
                     role = discord.utils.get(guild.roles, name='Narys')
+                if emoji == '👌':
+                    role = discord.utils.get(guild.roles, name='Noob')
+                if emoji == '🪓':
+                    role = discord.utils.get(guild.roles, name='Maladec')
             if add:
                 await member.add_roles(role)
             else:
@@ -60,6 +73,10 @@ def run_discord_bot():
         channel = str(message.channel)
 
         print(f'{username} said: "{user_message}" ({channel})')
+
+        messages_to_delete = ['/', 'fuck', 'suka']
+        if any(word in message.content.lower() for word in messages_to_delete):
+            await message.delete()
 
         if user_message[0] == '?':
             user_message = user_message[1:]
