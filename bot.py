@@ -74,9 +74,12 @@ def run_discord_bot():
 
         print(f'{username} said: "{user_message}" ({channel})')
 
-        messages_to_delete = ['/', 'fuck', 'suka']
+        messages_to_delete = ['fuck', 'suka']
+        if message.content.lower()[0] == '/':
+            await message.delete()
         if any(word in message.content.lower() for word in messages_to_delete):
             await message.delete()
+            await message.channel.send(f'{message.author.mention} nepraustaburni tu. Fu!')
 
         if user_message[0] == '?':
             user_message = user_message[1:]
